@@ -164,7 +164,7 @@
                                 <label class="form-label">Estado</label>
                                 <select th:field="*{estado}" class="form-select">
                                     <option value="" disabled selected>Selecciona el estado</option>
-                                    <option th:each="est : ${T(com.jprado.planillas.empleado.EmpleadoEstado).values()}"
+                                    <option th:each="est : ${T(com.example.planillasweb.empleado.EmpleadoEstado).values()}"
                                         th:value="${est}" th:text="${est}">
                                     </option>
                                 </select>
