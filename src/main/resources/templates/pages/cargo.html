@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/template :: head('Cargo')"></head>
+
+<body>
+    <div class="wrapper">
+        <!-- Aside -->
+        <div th:replace="fragments/template :: aside"></div>
+
+        <!-- Contenido principal -->
+        <div class="main">
+            <!-- Header -->
+            <div th:replace="fragments/template :: header"></div>
+
+            <!-- Main diferente en cada página -->
+            <main class="p-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="mb-0">Cargo</h2>
+                            <!-- Botón que abre el modal -->
+                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#registrarCargoModal">
+                                Registrar
+                            </button>
+                        </div>
+
+                        
+
+                        <!-- Tabla -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Sueldo Base</th>
+                                        <th>Descripción</th>
+                                        <th>Acciones</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <th:block th:each="cg:${lista}">
+                                    <tr>
+                                        <td th:text="${cg.id}"></td>
+                                        <td th:text="${cg.nombre}"></td>
+                                        <td th:text="${cg.salarioBase}"></td>
+                                        <td th:text="${cg.descripcion}"></td>
+                                        <td>
+                                            <a th:href="@{/cargo/edit/{id}(id=${cg.id})}"
+                                                class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                                            <form th:action="@{/cargo/delete}" method="post"
+                                                class="d-inline eliminar-form">
+                                                <input type="hidden" name="id" th:value="${cg.id}">
+                                                <button type="button"
+                                                    class="btn btn-danger btn-sm btn-eliminar"><i class="bi bi-trash-fill"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                            </table>
+                        </div>
+
+                
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <div th:replace="fragments/template :: footer"></div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registrarCargoModal" tabindex="-1" aria-labelledby="registrarCargoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="registrarCargoModalLabel">Registrar Cargos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/cargo/save}" th:object="${cargo}" method="post">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" th:field="*{nombre}" class="form-control"  placeholder="Nombre">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Sueldo base</label>
+                                <input type="number" th:field="*{salarioBase}" class="form-control"  placeholder="Ej 999,99">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Descripcion</label>
+                                <input type="text" th:field="*{descripcion}" class="form-control"  placeholder="Descripcion">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+<script src="/js/sidebar.js"></script>
+<script th:if="${abrirModal}">
+    document.addEventListener("DOMContentLoaded", function() {
+        const modal = new bootstrap.Modal(document.getElementById('registrarCargoModal'));
+        modal.show();
+    });
+</script>
+<script>
+document.querySelectorAll('.btn-eliminar').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const form = this.closest('form');
+        Swal.fire({
+            title: '¿Eliminar Cargo?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+</html>
